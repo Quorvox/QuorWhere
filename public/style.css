@@ -297,3 +297,10 @@ h1, h2 { font-weight: 500; margin: 0; letter-spacing: -.02em; }
 .pnlm-controls-container { top: auto; bottom: 120px; left: 12px; }
 /* вторая строка управления (скорость автопроигрывания, таймлайн) для игры не нужна и вылезает за экран */
 .mapillary-sequence-controls, .mapillary-sequence-playback, .mapillary-sequence-timeline { display: none !important; }
+
+/* дуэль: пометка «бот» и выбор формата рейтинговой игры */
+.bot-tag { font: 500 10px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); border: 1px solid var(--line2); border-radius: 4px; padding: 1px 5px; flex: none; }
+.choices { display: grid; gap: 10px; margin: 14px 0 6px; }
+.choice { display: grid; gap: 4px; text-align: left; font: 400 14px var(--sans); color: var(--muted); background: var(--bg); border: 1px solid var(--line2); border-radius: 12px; padding: 14px 16px; cursor: pointer; transition: border-color .2s var(--ease), background .2s var(--ease); }
+.choice b { font: 600 18px var(--sans); color: var(--text); }
+.choice:hover { border-color: var(--ok); background: #3ddc8410; }

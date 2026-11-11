@@ -81,6 +81,21 @@ async function openJoin(code = '') {
   if (r) busy($('joinBtn'), 'Захожу…', () => joinRoom(r.code, r.name, backHome));
 }
 
+// выбор формата рейтинговой игры: соло или дуэль с ботом
+function chooseRanked() {
+  const pick = (mode) => { $('modal').hidden = true; busy($('rankedBtn'), 'Ищу места…', () => startSolo({ mode }, refreshMe)); };
+  const card = (title, text, mode) => el('button', { className: 'choice', type: 'button', onclick: () => pick(mode) },
+    el('b', { textContent: title }), el('span', { textContent: text }));
+  $('modalBody').replaceChildren(
+    el('h2', { textContent: 'Рейтинговый режим' }),
+    el('p', { className: 'muted', textContent: '5 раундов по 2 минуты. Очки в обоих форматах идут в твой рейтинг.' }),
+    el('div', { className: 'choices' },
+      card('Одиночный', 'Играешь сам, правила одинаковые для всех.', 'ranked'),
+      card('Дуэль', 'Те же места, что и у соперника-бота. Чем выше твой рейтинг, тем точнее играет бот. Побеждает тот, у кого больше очков.', 'duel')),
+    el('button', { className: 'btn', type: 'button', textContent: 'Отмена', onclick: () => { $('modal').hidden = true; } }));
+  $('modal').hidden = false;
+}
+
 (async function init() {
   S.cfg = await api('/api/config');
   chips($('timeOpts'));
@@ -97,7 +112,7 @@ async function openJoin(code = '') {
   $('soloBtn').onclick = () => busy($('soloBtn'), 'Ищу места…', () => startSolo({ mode: 'solo', timeLimit }, refreshMe));
   $('rankedBtn').onclick = () => {
     if (!S.me) { if (S.cfg.quorvox) location.href = '/auth/quorvox'; else if (S.cfg.dev) location.href = '/auth/dev'; return; }
-    busy($('rankedBtn'), 'Ищу места…', () => startSolo({ mode: 'ranked' }, refreshMe));
+    chooseRanked();
   };
   $('roomBtn').onclick = async () => {
     const r = await ask({ title: 'Играть с друзьями', text: `Комната на ${S.cfg.maxPlayers} человек: одни и те же места, общий счёт. Время на раунд берётся из выбора на главном экране.`, action: 'Создать комнату' });

@@ -8,7 +8,7 @@
 
 ## Features
 
-- **3 modes:** solo (any time limit), ranked (5 rounds × 2 min, same rules for everyone, rating = average of your last 10 games), friends rooms (up to 5 players, same places, shared scoreboard, host controls the rounds).
+- **4 ways to play:** solo (any time limit), ranked solo (5 rounds × 2 min, same rules for everyone, rating = average of your last 10 games), **ranked duel against a bot** (same places for both, the bot's accuracy scales with your rating) and friends rooms (up to 5 players, same places, shared scoreboard, host controls the rounds).
 - **Fair play by design:** the correct answer lives only on the server and is sent to the client *after* the guess. Scoring and round timers are validated server-side; rooms reveal answers only when the round is over.
 - **Free panoramas:** places are picked from [Mapillary](https://www.mapillary.com) coverage tiles (360° images only, recent, quality-filtered, readable via API) near big cities worldwide; one country per round.
 - **Resilient viewer:** if the 3D viewer can't load (WebGL off, tracking protection blocks Meta's CDN), the server proxies the image and a lightweight 360° viewer ([Pannellum](https://pannellum.org)) takes over. A help dialog explains what to fix, and `/diag.html` runs a self-check.
@@ -66,6 +66,7 @@ pm2 start ecosystem.config.cjs && pm2 save
 
 - `server/locations.js` — picks a random big city, jitters the point, reads the Mapillary vector tile around it, keeps good 360° panoramas, verifies the image is readable via API, and keeps a warm pool so a game starts instantly.
 - `server/index.js` — solo/ranked games, scoring (haversine + exponential falloff, max 5000), leaderboard, image proxy (`/api/pano-img/:id`, only for the requester's *current* round), client error reports.
+- `server/bots.js` — duel opponents: 10 text-only bots (name + skill + variance). For each round the server draws a guess at a distance from the answer that matches a target score derived from the player's rating; bots are clearly labelled "bot" in the UI.
 - `server/rooms.js` — in-memory rooms (4-letter code, 5 players, host-driven rounds, polling every ~1.2 s).
 - `public/js/` — `main.js` (menu), `solo.js`, `room.js`, `common.js` (maps, panorama, timers), `bg.js` (menu background).
 

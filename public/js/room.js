@@ -164,7 +164,7 @@ function renderFinal() {
   $('fHint').textContent = 'Комнату можно закрыть — друзья останутся на этом экране, пока не выйдут сами.';
   const list = $('fList'); list.replaceChildren();
   if (!fMap) { fMap = L.map('fMap', { worldCopyJump: true, minZoom: 1, attributionControl: false }); addBase(fMap); }
-  fMap.eachLayer((l) => { if (!(l instanceof L.TileLayer)) fMap.removeLayer(l); });
+  fMap.eachLayer((l) => { if (l instanceof L.Marker || l instanceof L.Polyline) fMap.removeLayer(l); }); // базовый слой не трогаем
   const pts = [];
   v.final.rounds.forEach((rd, i) => {
     const a = [rd.answer.lat, rd.answer.lng]; pts.push(a);

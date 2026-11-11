@@ -8,6 +8,7 @@ import { makeRounds, countryName, provider } from './locations.js';
 import { haversineKm, scoreForDistance, MAX_SCORE } from './scoring.js';
 import { reverse } from './geocode.js';
 import { roomsRoutes, roomPano, MAX_PLAYERS } from './rooms.js';
+import { makeBotGame } from './bots.js';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const PORT = Number(process.env.PORT || 3020);
@@ -121,29 +122,34 @@ app.get('/api/leaderboard', (req, res) => {
 const getGame = (req) => {
   const g = db.prepare('SELECT * FROM games WHERE id = ? AND owner = ?').get(String(req.params.id), req.sid);
   if (!g) return null;
-  return { ...g, rounds: JSON.parse(g.rounds), guesses: JSON.parse(g.guesses) };
+  return { ...g, rounds: JSON.parse(g.rounds), guesses: JSON.parse(g.guesses), bot: g.bot ? JSON.parse(g.bot) : null };
 };
 const save = (g) => db.prepare('UPDATE games SET guesses = ?, current = ?, started = ?, finished = ?, total = ? WHERE id = ?')
   .run(JSON.stringify(g.guesses), g.current, g.started, g.finished ? 1 : 0, g.total, g.id);
 
 // что видит клиент про текущий раунд: никаких координат ответа
+const botTotal = (g) => g.bot ? g.bot.guesses.slice(0, g.guesses.length).reduce((s, b) => s + b.score, 0) : 0;
 const roundView = (g) => ({
   gameId: g.id, round: g.current + 1, rounds: g.rounds.length, total: g.total,
   timeLimit: g.time_limit, ranked: !!g.ranked, startedAt: g.started, serverNow: Date.now(),
   pano: g.rounds[g.current].pano,
   answered: g.guesses.length > g.current,
+  // дуэль: имя соперника, его счёт по уже раскрытым раундам и время, когда он «ответит» (сама догадка скрыта)
+  opponent: g.bot ? { name: g.bot.name, bot: true, total: botTotal(g), answerAt: g.started + g.bot.guesses[g.current].delay } : null,
 });
 
 app.post('/api/games', limit('new', 20, 3600_000), wrap(async (req, res) => {
-  const ranked = req.body?.mode === 'ranked';
+  const duel = req.body?.mode === 'duel';
+  const ranked = req.body?.mode === 'ranked' || duel;
   if (ranked && !req.user) return res.status(401).json({ error: 'Для рейтинговой игры нужно войти через Quorvox ID' });
   const tl = ranked ? RANKED_LIMIT : Number(req.body?.timeLimit || 0);
   if (!TIME_LIMITS.includes(tl)) return res.status(400).json({ error: 'Неверный лимит времени' });
   const rounds = await makeRounds(ROUNDS);
   const id = crypto.randomBytes(8).toString('hex');
   const now = Date.now();
-  db.prepare('INSERT INTO games (id, owner, user_id, time_limit, rounds, started, created, ranked) VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
-    .run(id, req.sid, req.user?.id ?? null, tl, JSON.stringify(rounds), now, now, ranked ? 1 : 0);
+  const bot = duel ? makeBotGame(rounds, ratingOf(req.user.id).rating, tl) : null;
+  db.prepare('INSERT INTO games (id, owner, user_id, time_limit, rounds, started, created, ranked, bot) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)')
+    .run(id, req.sid, req.user?.id ?? null, tl, JSON.stringify(rounds), now, now, ranked ? 1 : 0, bot ? JSON.stringify(bot) : null);
   res.json(roundView(getGame({ params: { id }, sid: req.sid })));
 }));
 
@@ -173,9 +179,11 @@ app.post('/api/games/:id/guess', wrap(async (req, res) => {
   g.guesses.push(guess);
   g.total += guess.score;
   save(g);
+  const bg = g.bot?.guesses[g.current];
   res.json({
     guess, answer: { lat: ans.lat, lng: ans.lng, country: countryName(ans.cc) },
     total: g.total, last: g.current + 1 >= g.rounds.length,
+    bot: bg ? { name: g.bot.name, guess: { lat: bg.lat, lng: bg.lng, km: bg.km, score: bg.score }, total: botTotal(g) } : undefined,
   });
 }));
 
@@ -185,9 +193,11 @@ app.post('/api/games/:id/next', (req, res) => {
   if (g.guesses.length <= g.current) return res.status(409).json({ error: 'Сначала ответь в этом раунде' });
   if (g.current + 1 >= g.rounds.length) {
     g.finished = true; save(g);
+    const bt = botTotal(g);
     return res.json({
       finished: true, total: g.total,
-      rounds: g.rounds.map((r, i) => ({ answer: { lat: r.lat, lng: r.lng, country: countryName(r.cc) }, guess: g.guesses[i] })),
+      rounds: g.rounds.map((r, i) => ({ answer: { lat: r.lat, lng: r.lng, country: countryName(r.cc) }, guess: g.guesses[i], bot: g.bot ? g.bot.guesses[i] : undefined })),
+      duel: g.bot ? { name: g.bot.name, bot: true, total: bt, result: g.total > bt ? 'win' : g.total < bt ? 'loss' : 'draw' } : undefined,
     });
   }
   g.current += 1; g.started = Date.now(); save(g);

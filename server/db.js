@@ -38,6 +38,7 @@ db.exec(`
 `);
 // поле ranked добавили позже — для уже существующей базы
 try { db.exec('ALTER TABLE games ADD COLUMN ranked INTEGER NOT NULL DEFAULT 0'); } catch { /* уже есть */ }
+try { db.exec('ALTER TABLE games ADD COLUMN bot TEXT'); } catch { /* уже есть */ }
 
 // чистим старьё: сессии гостей и брошенные игры
 export function cleanup() {

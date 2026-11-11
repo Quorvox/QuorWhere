@@ -103,6 +103,47 @@ await t('одиночная игра в рейтинг не попадает', a
   assert.equal(lb.length, 1); assert.equal(lb[0].name, 'Dev Player');
 });
 
+console.log('дуэли с ботами');
+const botsMod = await import('../server/bots.js');
+await t('ботов ровно 10, имена разные', () => { assert.equal(botsMod.BOTS.length, 10); assert.equal(new Set(botsMod.BOTS.map((b) => b.name)).size, 10); });
+await t('чем выше рейтинг игрока, тем точнее бот', () => {
+  const fake = Array.from({ length: 5 }, (_, i) => ({ lat: 10 + i * 8, lng: -20 + i * 30 }));
+  const avg = (rating) => { let s = 0, n = 0; for (let k = 0; k < 400; k++) for (const g of botsMod.makeBotGame(fake, rating).guesses) { s += g.score; n++; } return s / n; };
+  const low = avg(3000), mid = avg(12000), high = avg(22000), fresh = avg(null);
+  console.log(`     средний раунд бота: рейтинг 3000 → ${Math.round(low)}, 12000 → ${Math.round(mid)}, 22000 → ${Math.round(high)}, без рейтинга → ${Math.round(fresh)}`);
+  assert.ok(low < mid && mid < high, 'точность должна расти вместе с рейтингом');
+  assert.ok(low > 300 && high < 4900, 'бот не должен быть ни нулевым, ни идеальным');
+  assert.ok(fresh > low && fresh < high, 'новичку достаётся средний бот');
+});
+await t('дуэль: гостю нельзя', async () => { assert.equal((await guest('/api/games', { method: 'POST', body: { mode: 'duel' } })).status, 401); });
+await t('дуэль: бот играет те же 5 раундов, его догадки скрыты до твоей', async () => {
+  const u = client(); await u('/auth/dev');
+  const before = (await u('/api/me')).json.games;
+  const r = await u('/api/games', { method: 'POST', body: { mode: 'duel' } });
+  assert.equal(r.status, 200); assert.equal(r.json.ranked, true); assert.equal(r.json.timeLimit, 120);
+  const o = r.json.opponent; assert.ok(o && o.bot === true && o.name && o.total === 0 && Number.isFinite(o.answerAt));
+  assert.equal(o.guess, undefined, 'догадка бота не должна утекать заранее');
+  let me = 0, bot = 0; const id = r.json.gameId;
+  for (let i = 1; i <= 5; i++) {
+    const g = await u(`/api/games/${id}/guess`, { method: 'POST', body: { lat: 0, lng: 0 } });
+    assert.equal(g.status, 200);
+    assert.ok(g.json.bot && Number.isFinite(g.json.bot.guess.lat), 'после твоей догадки бот раскрывается');
+    me += g.json.guess.score; bot += g.json.bot.guess.score; assert.equal(g.json.bot.total, bot);
+    const n = await u(`/api/games/${id}/next`, { method: 'POST' });
+    if (i < 5) { assert.equal(n.json.round, i + 1); assert.equal(n.json.opponent.total, bot); }
+    else {
+      assert.equal(n.json.finished, true); assert.equal(n.json.duel.total, bot); assert.equal(n.json.total, me);
+      assert.equal(n.json.duel.result, me > bot ? 'win' : me < bot ? 'loss' : 'draw'); assert.equal(n.json.rounds.length, 5); assert.ok(n.json.rounds.every((x) => x.bot));
+    }
+  }
+  assert.equal((await u('/api/me')).json.games, Math.min(10, before + 1), 'дуэль идёт в рейтинг');
+});
+await t('обычная рейтинговая игра без бота', async () => {
+  const u = client(); await u('/auth/dev');
+  const r = await u('/api/games', { method: 'POST', body: { mode: 'ranked' } });
+  assert.equal(r.json.opponent, null);
+});
+
 console.log('комнаты');
 const mk = (name) => { const c = client(); c.who = name; return c; };
 const host = mk('Хост'), p2 = mk('Второй'), p3 = mk('Третий'), p4 = mk('Четвёртый'), p5 = mk('Пятый'), p6 = mk('Шестой');
