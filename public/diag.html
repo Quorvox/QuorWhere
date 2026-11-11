@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Диагностика — QuorWhere</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/vendor/mapillary/mapillary.css">
+<link rel="stylesheet" href="/vendor/maplibre/maplibre-gl.css">
+</head>
+<body class="doc-page">
+<main class="doc">
+  <p><a href="/">← На главную</a></p>
+  <h1>Диагностика браузера</h1>
+  <p class="muted">Страница проверяет по шагам, что именно мешает панораме и карте в твоём браузере. Ничего личного не отправляется: только результаты проверок и тип браузера. Подожди около 20 секунд.</p>
+  <ol id="out" class="diag-list"></ol>
+  <p id="sum" class="muted"></p>
+  <button id="send" class="btn primary" hidden>Отправить отчёт</button>
+  <div id="m1" style="position:absolute;left:-9999px;width:300px;height:200px"></div>
+  <div id="m2" style="position:absolute;left:-9999px;width:400px;height:300px"></div>
+</main>
+<script src="/vendor/mapillary/mapillary.js"></script>
+<script src="/vendor/maplibre/maplibre-gl.js"></script>
+<script type="module">
+const out = document.getElementById('out'), res = [];
+const add = (name, ok, info) => {
+  res.push(`${ok ? 'OK' : 'FAIL'} ${name}: ${info}`);
+  const li = document.createElement('li');
+  li.innerHTML = `<b style="color:${ok ? '#3ddc84' : '#ff6b6b'}">${ok ? 'OK' : 'ПРОБЛЕМА'}</b> · ${name} <span class="muted">— ${String(info).replace(/</g, '&lt;')}</span>`;
+  out.append(li);
+};
+const timeout = (ms, v) => new Promise((r) => setTimeout(() => r(v), ms));
+
+// 1. WebGL
+let gl1, gl2, renderer = '?', soft = false;
+try {
+  const c = document.createElement('canvas'); gl2 = c.getContext('webgl2');
+  const c2 = document.createElement('canvas'); gl1 = c2.getContext('webgl');
+  const g = gl2 || gl1;
+  if (g) { const ext = g.getExtension('WEBGL_debug_renderer_info'); renderer = ext ? g.getParameter(ext.UNMASKED_RENDERER_WEBGL) : g.getParameter(g.RENDERER); }
+  soft = /swiftshader|software|llvmpipe|basic render/i.test(renderer);
+} catch (e) { renderer = 'ошибка: ' + e.message; }
+add('WebGL 2', !!gl2, gl2 ? 'есть' : 'нет'); add('WebGL 1', !!gl1, gl1 ? 'есть' : 'нет');
+add('Видеокарта (рендерер)', !soft && renderer !== '?', renderer + (soft ? ' — ПРОГРАММНЫЙ рендер, очень медленный' : ''));
+let strict = false; try { strict = !document.createElement('canvas').getContext('webgl', { failIfMajorPerformanceCaveat: true }); } catch {}
+add('Аппаратное ускорение', !strict, strict ? 'браузер считает WebGL медленным (включи аппаратное ускорение)' : 'работает');
+
+// 2. сеть
+const cfg = await (await fetch('/api/config')).json();
+const tryFetch = async (name, url, opts) => {
+  const t0 = performance.now();
+  try { const r = await Promise.race([fetch(url, opts), timeout(9000, null)]); if (!r) return add(name, false, 'нет ответа за 9 с (заблокировано или очень медленно)'); add(name, r.ok, `HTTP ${r.status}, ${Math.round(performance.now() - t0)} мс`); return r; }
+  catch (e) { add(name, false, 'запрос не прошёл: ' + e.message + ' (вероятно блокировка расширением или защитой от отслеживания)'); return null; }
+};
+await tryFetch('Стиль карты (OpenFreeMap)', 'https://tiles.openfreemap.org/styles/positron');
+try {
+  const tj = await (await fetch('https://tiles.openfreemap.org/planet')).json();
+  await tryFetch('Тайл карты (OpenFreeMap)', tj.tiles[0].replace('{z}', 2).replace('{x}', 1).replace('{y}', 1));
+} catch (e) { add('Тайл карты (OpenFreeMap)', false, 'не удалось получить описание тайлов: ' + e.message); }
+const id = '1170671527626808';
+const g = await tryFetch('Mapillary API', `https://graph.mapillary.com/${id}?fields=thumb_2048_url&access_token=${encodeURIComponent(cfg.mapillaryToken || '')}`);
+let imgUrl = null; try { imgUrl = g && g.ok ? (await g.json()).thumb_2048_url : null; } catch {}
+if (imgUrl) {
+  const ok = await new Promise((r) => { const im = new Image(); im.onload = () => r(true); im.onerror = () => r(false); im.src = imgUrl; setTimeout(() => r(null), 9000); });
+  add('Картинка панорамы (CDN Mapillary/Meta)', ok === true, ok === true ? 'загрузилась' : ok === null ? 'не загрузилась за 9 с' : 'заблокирована (вероятно защита от отслеживания или расширение)');
+} else if (g) add('Картинка панорамы', false, 'API не отдал ссылку на картинку (id мог устареть)');
+
+// 3. рендер
+const maplibreTest = new Promise((resolve) => {
+  try {
+    const m = new maplibregl.Map({ container: 'm1', style: 'https://tiles.openfreemap.org/styles/positron', center: [10, 25], zoom: 1, interactive: false, attributionControl: false });
+    m.on('error', (e) => resolve('ошибка: ' + (e.error?.message || e).toString().slice(0, 120)));
+    m.once('idle', () => resolve(true));
+    setTimeout(() => resolve('не отрисовалась за 12 с'), 12000);
+  } catch (e) { resolve('исключение: ' + e.message); }
+});
+const mr = await maplibreTest; add('Векторная карта (MapLibre)', mr === true, mr === true ? 'отрисовалась' : mr);
+
+const viewerTest = new Promise((resolve) => {
+  try {
+    const v = new mapillary.Viewer({ accessToken: cfg.mapillaryToken, container: 'm2', imageId: id, component: { cover: false } });
+    v.on('image', () => resolve(true));
+    setTimeout(() => resolve('не показала кадр за 12 с'), 12000);
+  } catch (e) { resolve('исключение: ' + e.message); }
+});
+const vr = await viewerTest; add('3D-просмотрщик панорам (Mapillary)', vr === true, vr === true ? 'показал кадр' : vr);
+
+const bad = res.filter((x) => x.startsWith('FAIL')).length;
+document.getElementById('sum').textContent = bad ? `Найдено проблем: ${bad}. Нажми «Отправить отчёт» — я увижу, что именно не так.` : 'Всё работает. Если на сайте всё равно плохо, нажми «Отправить отчёт» и опиши, что видишь.';
+const btn = document.getElementById('send'); btn.hidden = false;
+const send = () => fetch('/api/client-log', { method: 'POST', headers: { 'Content-Type': 'application/json' }, keepalive: true, body: JSON.stringify({ kind: 'diag', msg: res.join(' | '), webgl: !!(gl2 || gl1), ua: navigator.userAgent, provider: 'diag' }) });
+send(); // отчёт уходит автоматически один раз
+btn.onclick = async () => { await send(); btn.textContent = 'Отправлено, спасибо'; btn.disabled = true; };
+</script>
+<style>.diag-list { list-style: none; padding: 0; display: grid; gap: 8px; } .diag-list li { padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg2); font-size: 14px; }</style>
+</body>
+</html>

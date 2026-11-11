@@ -1,0 +1,299 @@
+/* Стиль как у quorvox.github.io: почти чёрный фон, Manrope, мелкие подписи моноширинным, белые кнопки */
+@font-face { font-family: Manrope; font-weight: 400; font-display: swap; src: url(/vendor/fonts/manrope/manrope-cyrillic-400-normal.woff2) format('woff2'); unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; }
+@font-face { font-family: Manrope; font-weight: 400; font-display: swap; src: url(/vendor/fonts/manrope/manrope-latin-400-normal.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: Manrope; font-weight: 500; font-display: swap; src: url(/vendor/fonts/manrope/manrope-cyrillic-500-normal.woff2) format('woff2'); unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; }
+@font-face { font-family: Manrope; font-weight: 500; font-display: swap; src: url(/vendor/fonts/manrope/manrope-latin-500-normal.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: Manrope; font-weight: 700; font-display: swap; src: url(/vendor/fonts/manrope/manrope-cyrillic-700-normal.woff2) format('woff2'); unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; }
+@font-face { font-family: Manrope; font-weight: 700; font-display: swap; src: url(/vendor/fonts/manrope/manrope-latin-700-normal.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "JetBrains Mono"; font-weight: 400; font-display: swap; src: url(/vendor/fonts/jetbrains-mono/jetbrains-mono-cyrillic-400-normal.woff2) format('woff2'); unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; }
+@font-face { font-family: "JetBrains Mono"; font-weight: 400; font-display: swap; src: url(/vendor/fonts/jetbrains-mono/jetbrains-mono-latin-400-normal.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "JetBrains Mono"; font-weight: 500; font-display: swap; src: url(/vendor/fonts/jetbrains-mono/jetbrains-mono-cyrillic-500-normal.woff2) format('woff2'); unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; }
+@font-face { font-family: "JetBrains Mono"; font-weight: 500; font-display: swap; src: url(/vendor/fonts/jetbrains-mono/jetbrains-mono-latin-500-normal.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+
+:root {
+  --bg: #050506; --bg2: #0b0b0d; --bg3: #121215; --line: #1f1f23; --line2: #2c2c32;
+  --text: #f4f4f5; --muted: #a1a1aa; --dim: #71717a; --ok: #3ddc84; --bad: #ff6b6b;
+  --sans: "Manrope", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "Cascadia Code", Consolas, Menlo, monospace;
+  --ease: cubic-bezier(.2, .7, .2, 1);
+  --p1: #f4f4f5; --p2: #3ddc84; --p3: #5aa9ff; --p4: #ffb454; --p5: #ff7ab6;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body { background: var(--bg); color: var(--text); font: 400 16px/1.55 var(--sans); -webkit-font-smoothing: antialiased; }
+[hidden] { display: none !important; }
+a { color: inherit; }
+h1, h2 { font-weight: 500; margin: 0; letter-spacing: -.02em; }
+.mono { font-family: var(--mono); }
+.muted { color: var(--muted); font-size: 14px; }
+.err { color: var(--bad); text-align: center; margin: 14px 0 0; }
+.dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 0 3px #3ddc8422; vertical-align: middle; }
+
+/* кнопки: белая основная, остальные с тонкой рамкой */
+.btn { font: 500 15px/1 var(--sans); padding: 13px 20px; border-radius: 6px; border: 1px solid var(--line2); background: transparent; color: var(--text); cursor: pointer; text-decoration: none; display: inline-block; transition: border-color .2s var(--ease), background .2s var(--ease), transform .2s var(--ease); }
+.btn:hover:not(:disabled) { border-color: var(--text); }
+.btn:active:not(:disabled) { transform: translateY(1px); }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+.btn.primary { background: var(--text); color: #050506; border-color: var(--text); }
+.btn.primary:hover:not(:disabled) { background: #fff; }
+.link-btn { font: 500 14px var(--sans); color: var(--muted); background: none; border: 0; cursor: pointer; padding: 8px 4px; }
+.link-btn:hover { color: var(--text); }
+.icon-btn { width: 38px; height: 38px; border-radius: 6px; border: 1px solid var(--line2); background: #050506e6; color: var(--text); font-size: 18px; line-height: 1; cursor: pointer; }
+.icon-btn:hover { border-color: var(--text); }
+.icon-btn.small { width: 36px; height: 36px; font-size: 16px; }
+.input { width: 100%; font: 400 15px var(--sans); color: var(--text); background: var(--bg); border: 1px solid var(--line2); border-radius: 6px; padding: 12px 14px; outline: none; }
+.input:focus { border-color: var(--muted); }
+.input.mono { font-family: var(--mono); text-transform: uppercase; letter-spacing: .12em; }
+
+.screen { min-height: 100%; }
+#home, #lobby, #final { background: var(--bg); position: relative; overflow-x: hidden; }
+#home::before, #lobby::before, #final::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 640px; pointer-events: none;
+  background-image: radial-gradient(#ffffff1c 1px, transparent 1.2px); background-size: 26px 26px;
+  -webkit-mask-image: linear-gradient(#000 0%, transparent 85%); mask-image: linear-gradient(#000 0%, transparent 85%); }
+#home > *, #lobby > *, #final > * { position: relative; }
+
+.top { display: flex; align-items: center; justify-content: space-between; gap: 12px; max-width: 1120px; margin: 0 auto; padding: 18px 20px; }
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 700; letter-spacing: -.01em; text-decoration: none; }
+.brand-mark { width: 20px; height: 20px; border: 2px solid var(--text); border-radius: 6px; position: relative; display: inline-block; }
+.brand-mark::after { content: ""; position: absolute; inset: 4px; background: var(--ok); border-radius: 50%; }
+.top-nav { display: flex; align-items: center; gap: 14px; }
+.auth { display: flex; align-items: center; gap: 12px; font-size: 14px; color: var(--muted); }
+.auth .btn { padding: 9px 14px; font-size: 14px; }
+
+.hero { max-width: 1120px; margin: 0 auto; padding: 56px 20px 36px; }
+.eyebrow { font: 500 12px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 22px; }
+.hero h1 { font-size: clamp(40px, 8.5vw, 84px); line-height: 1.02; margin-bottom: 22px; }
+.lead { max-width: 560px; color: var(--muted); margin: 0; font-size: 17px; }
+
+.modes { max-width: 1120px; margin: 0 auto; padding: 0 20px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.card { background: var(--bg2); border: 1px solid var(--line); border-radius: 12px; padding: 24px; display: flex; flex-direction: column; gap: 12px; transition: border-color .25s var(--ease); }
+.card:hover { border-color: var(--line2); }
+.card h2 { font-size: 24px; }
+.card p { margin: 0; color: var(--muted); font-size: 15px; }
+.card .btn { margin-top: auto; }
+.card-tag { font: 500 12px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--dim); }
+.chips-label { font: 500 11px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--dim); margin-top: 6px; }
+.chips { display: flex; gap: 6px; flex-wrap: wrap; }
+.chips button { font: 500 13px var(--mono); padding: 8px 11px; border-radius: 6px; border: 1px solid var(--line2); background: transparent; color: var(--muted); cursor: pointer; }
+.chips button:hover { color: var(--text); border-color: var(--muted); }
+.chips button.on { background: var(--text); border-color: var(--text); color: #050506; }
+.stat { font: 500 14px var(--mono); color: var(--muted); border-top: 1px dashed var(--line2); border-bottom: 1px dashed var(--line2); padding: 10px 0; }
+.stat b { color: var(--text); font-size: 20px; font-weight: 500; }
+.join { display: flex; gap: 8px; }
+.join .input { flex: 1; min-width: 0; text-align: center; }
+.join .btn { margin: 0; }
+
+.foot { max-width: 1120px; margin: 0 auto; padding: 40px 20px 28px; display: flex; gap: 22px; flex-wrap: wrap; font: 400 12px var(--mono); color: var(--dim); }
+.foot a { color: var(--dim); text-decoration: none; }
+.foot a:hover { color: var(--text); }
+
+/* лобби */
+.lobby-card, .final-card { max-width: 560px; margin: 28px auto 0; width: calc(100% - 40px); gap: 14px; }
+.final-card { max-width: 760px; }
+.code { font: 500 clamp(54px, 14vw, 88px)/1 var(--mono); letter-spacing: .16em; }
+.share { display: flex; gap: 8px; }
+.share .input { text-transform: none; letter-spacing: 0; font-size: 13px; }
+.players { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
+.players li { display: flex; align-items: center; gap: 10px; padding: 11px 14px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); }
+.players li.empty { color: var(--dim); border-style: dashed; }
+.sw { width: 10px; height: 10px; border-radius: 50%; flex: none; }
+.tag { margin-left: auto; font: 500 11px var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--dim); }
+
+/* игра */
+#game { position: fixed; inset: 0; background: #000; overflow: hidden; }
+#pano { position: absolute; inset: 0; }
+#nopano { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; padding: 24px; color: var(--muted); background: var(--bg); }
+#nopano p { max-width: 440px; margin: 8px auto 0; }
+.big-mark { width: 44px; height: 44px; border: 3px solid var(--text); border-radius: 12px; margin: 0 auto 16px; position: relative; }
+.big-mark::after { content: ""; position: absolute; inset: 9px; background: var(--ok); border-radius: 50%; }
+.hud { position: absolute; top: 12px; left: 12px; right: 12px; display: flex; gap: 8px; align-items: flex-start; pointer-events: none; z-index: 700; }
+.hud > * { pointer-events: auto; }
+.spacer { flex: 1; }
+.pill { background: #050506e6; border: 1px solid var(--line2); border-radius: 6px; padding: 9px 13px; font-size: 13px; color: var(--muted); }
+.pill b { color: var(--text); font-weight: 500; }
+
+.board { position: absolute; top: 62px; left: 12px; z-index: 650; background: #050506e6; border: 1px solid var(--line2); border-radius: 8px; padding: 8px; min-width: 190px; max-width: 240px; }
+.board div { display: flex; align-items: center; gap: 8px; padding: 5px 6px; font-size: 13px; }
+.board .nm { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.board .sc { font-family: var(--mono); color: var(--muted); }
+.board .ok { color: var(--ok); font-family: var(--mono); }
+
+.admin-wrap { position: relative; }
+.menu { position: absolute; right: 0; top: 46px; width: min(340px, calc(100vw - 24px)); background: var(--bg2); border: 1px solid var(--line2); border-radius: 10px; padding: 10px; box-shadow: 0 14px 40px #000c; }
+.menu-title { font: 500 11px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--dim); padding: 2px 6px 8px; }
+.menu-item { width: 100%; text-align: left; font: 500 14px var(--sans); color: var(--text); background: var(--bg); border: 1px solid var(--line2); border-radius: 6px; padding: 10px 12px; cursor: pointer; }
+.menu-item:hover { border-color: var(--text); }
+.hint-out { margin-top: 10px; font-size: 14px; }
+.hint-out dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; }
+.hint-out dt { color: var(--dim); }
+.hint-out dd { margin: 0; word-break: break-word; }
+.hint-out a { color: var(--ok); }
+
+.mini { position: absolute; right: 14px; bottom: 14px; width: 300px; z-index: 600; background: var(--bg2); border: 1px solid var(--line2); border-radius: 10px; overflow: hidden; box-shadow: 0 14px 40px #000c; transition: width .18s var(--ease), height .18s var(--ease); display: flex; flex-direction: column; }
+.mini #map { height: 190px; transition: height .18s var(--ease); }
+.mini:hover, .mini.big { width: min(640px, calc(100vw - 28px)); }
+.mini:hover #map, .mini.big #map { height: min(400px, 52vh); }
+.mini-bar { display: flex; gap: 8px; padding: 8px; align-items: center; }
+.mini-bar .btn { flex: 1; }
+.mini.done { width: min(920px, calc(100vw - 28px)); top: 70px; }
+.mini.done #map { height: auto; flex: 1; min-height: 240px; }
+.mini.done .mini-bar { display: none; }
+.result { padding: 14px 16px 16px; text-align: center; }
+.r-main { display: flex; justify-content: space-between; align-items: baseline; font-size: 17px; margin-bottom: 2px; }
+#rScore { color: var(--ok); font: 500 26px var(--mono); }
+.r-sub { color: var(--muted); margin-bottom: 12px; }
+.r-board { list-style: none; padding: 0; margin: 0 0 12px; display: grid; gap: 4px; text-align: left; }
+.r-board li { display: flex; align-items: center; gap: 10px; padding: 7px 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); font-size: 14px; }
+.r-board .nm { flex: 1; }
+.r-board .km { font: 400 12px var(--mono); color: var(--dim); }
+.r-board .sc { font: 500 14px var(--mono); color: var(--ok); }
+.r-board .tot { font: 500 14px var(--mono); color: var(--text); min-width: 56px; text-align: right; }
+@media (max-width: 640px) {
+  .modes { grid-template-columns: 1fr; }
+  .hero { padding-top: 32px; }
+  .mini { width: 170px; right: 10px; bottom: 10px; }
+  .mini #map { height: 120px; }
+  .mini:hover, .mini.big { width: calc(100vw - 20px); }
+  .board { top: 58px; min-width: 150px; }
+}
+
+.pin { width: 20px; height: 20px; border-radius: 50%; border: 3px solid #fff; box-shadow: 0 2px 8px #000a; }
+.pin.answer { background: var(--ok); }
+.pin.guess { background: #fff; border-color: #050506; }
+.leaflet-tooltip.pn { background: #050506; color: #f4f4f5; border: 1px solid #2c2c32; font: 500 12px var(--sans); }
+
+.final-score { display: flex; align-items: baseline; gap: 10px; }
+.final-score b { font: 500 64px/1 var(--mono); }
+.final-score span { color: var(--muted); }
+.final-map { height: 260px; border-radius: 10px; overflow: hidden; border: 1px solid var(--line); }
+.rounds-list { padding: 0; list-style: none; display: grid; gap: 6px; margin: 0; }
+.rounds-list li { display: flex; justify-content: space-between; gap: 10px; background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 9px 12px; font-size: 14px; }
+.rounds-list .s { color: var(--ok); font-family: var(--mono); white-space: nowrap; }
+.row { display: flex; gap: 10px; flex-wrap: wrap; }
+
+.modal { position: fixed; inset: 0; background: #000d; display: grid; place-items: center; padding: 16px; z-index: 2000; }
+.modal-card { background: var(--bg2); border: 1px solid var(--line2); border-radius: 12px; padding: 24px; max-width: 480px; width: 100%; max-height: 90vh; overflow: auto; }
+.modal-card h2 { margin-bottom: 8px; }
+.modal-card .btn { margin: 14px 8px 0 0; }
+.lb { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 15px; }
+.lb td { padding: 9px 4px; border-bottom: 1px solid var(--line); }
+.lb td:first-child { color: var(--dim); width: 30px; font-family: var(--mono); }
+.lb td.r { text-align: right; font-family: var(--mono); }
+.lb td.s { color: var(--ok); }
+.leaflet-container { background: #0a0a0c; font: inherit; }
+
+.pano-status { position: absolute; inset: 0; z-index: 5; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; text-align: center; padding: 24px; color: var(--muted); background: #0b0b0d; pointer-events: none; }
+.pano-status .ps-text { max-width: 480px; }
+.pano-status .btn { pointer-events: auto; }
+.maplibregl-canvas { outline: none; }
+
+/* управление Mapillary (‹ ▶ ›): левый нижний угол, чтобы не перекрывать стрелки перехода по центру и миникарту справа */
+.mapillary-sequence-container { top: auto !important; bottom: 18px !important; left: 18px !important; right: auto !important; width: auto !important; }
+.mapillary-sequence-stepper { position: relative !important; top: auto !important; bottom: 0 !important; left: 0 !important; right: auto !important; margin: 0 !important; transform: scale(1.5); transform-origin: 0 100%; opacity: .95; }
+.mapillary-sequence-stepper:hover { opacity: 1; }
+.flat-pano { position: absolute; inset: 0; z-index: 4; overflow-x: auto; overflow-y: hidden; background: #000; cursor: grab; scrollbar-width: none; }
+.flat-pano::-webkit-scrollbar { display: none; }
+.flat-pano img { height: 100%; width: auto; max-width: none; display: block; user-select: none; -webkit-user-drag: none; }
+.flat-note { position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%); z-index: 6; font: 400 12px var(--mono); color: var(--muted); background: #050506e6; border: 1px solid var(--line2); border-radius: 6px; padding: 8px 12px; max-width: calc(100vw - 360px); text-align: center; pointer-events: none; }
+@media (max-width: 640px) { .flat-note { max-width: calc(100vw - 200px); bottom: 150px; } }
+
+}
+
+.help-list { margin: 8px 0 12px; padding-left: 22px; color: var(--muted); font-size: 14px; display: grid; gap: 4px; }
+.help-list li::marker { color: var(--dim); font-family: var(--mono); }
+.modal-card .btn { margin-top: 6px; }
+
+/* на маленькой миникарте подпись источников не помещается — показываем её, когда карта увеличена */
+.mini:not(:hover):not(.big):not(.done) .leaflet-control-attribution { display: none; }
+
+/* юридические страницы */
+.doc-page { background: var(--bg); }
+.doc { max-width: 760px; margin: 0 auto; padding: 32px 20px 80px; }
+.doc h1 { font-size: 40px; margin: 12px 0 6px; }
+.doc h2 { font-size: 20px; margin: 30px 0 8px; letter-spacing: -.01em; }
+.doc p, .doc li { color: var(--muted); }
+.doc a { color: var(--text); text-underline-offset: 3px; }
+.doc b { color: var(--text); font-weight: 600; }
+.doc code { font: 400 13px var(--mono); background: var(--bg3); padding: 1px 6px; border-radius: 4px; color: var(--text); }
+.doc mark { background: #ffb45426; color: #ffb454; padding: 1px 4px; border-radius: 3px; }
+.doc ul, .doc ol { padding-left: 22px; display: grid; gap: 6px; }
+.doc-table { width: 100%; border-collapse: collapse; font-size: 14px; margin: 10px 0; }
+.doc-table th, .doc-table td { text-align: left; vertical-align: top; padding: 9px 10px; border-bottom: 1px solid var(--line); color: var(--muted); }
+.doc-table th { font: 500 11px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--dim); }
+
+/* ===== главное меню: стиль как у worldguessr, палитра Quorvox ===== */
+#home { min-height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+#home::before { display: none; }
+.bg-map { position: absolute !important; inset: 0; z-index: 0; background: #0a0a0c; opacity: 0; transition: opacity 1.2s var(--ease); }
+.bg-map.on { opacity: 1; }
+/* светлая карта превращается в тёмную: инверсия + возврат оттенков */
+.bg-map canvas { filter: invert(1) hue-rotate(180deg) brightness(1.9) contrast(1.1) saturate(.9); }
+.bg-shade { position: absolute !important; inset: 0; z-index: 1; pointer-events: none;
+  background: linear-gradient(90deg, #050506d6 0%, #050506a4 30%, #05050650 70%, #05050630 100%), radial-gradient(900px 500px at 0% 100%, #3ddc8418, transparent 70%); }
+#home > .home-top, #home > .home-menu, #home > .dock, #home > .foot { position: relative; z-index: 2; }
+.home-top { display: flex; justify-content: flex-end; padding: 18px 20px; }
+.auth { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
+.pill-btn { display: inline-flex; align-items: center; gap: 8px; font: 500 14px var(--sans); color: var(--text); background: #ffffff14; border: 1px solid #ffffff1f; border-radius: 50px; padding: 10px 18px; cursor: pointer; text-decoration: none; backdrop-filter: blur(8px); transition: background .2s var(--ease), border-color .2s var(--ease); }
+.pill-btn:hover { background: #ffffff22; border-color: #ffffff40; }
+.pill-btn.green { background: linear-gradient(135deg, #14411999, #0e5a2ecc); border-color: #3ddc8466; }
+.pill-btn.green:hover { border-color: #3ddc84; }
+.pill-btn .ic { width: 18px; height: 18px; }
+
+.home-menu { padding: 0 28px; max-width: 520px; margin-top: 4vh; }
+.brand.big { font-size: 30px; font-weight: 700; letter-spacing: -.02em; gap: 12px; }
+.brand.big .brand-mark { width: 28px; height: 28px; border-radius: 8px; }
+.brand.big .brand-mark::after { inset: 6px; }
+.tagline { color: var(--muted); margin: 8px 0 22px; max-width: 360px; }
+.menu-list { display: flex; flex-direction: column; gap: 2px; max-width: 420px; }
+.menu-list hr { border: 0; height: 1px; background: #ffffff2e; margin: 8px 0; }
+.mi { display: flex; align-items: center; gap: 14px; width: 100%; text-align: left; font: 600 20px/1.2 var(--sans); color: var(--text); background: transparent; border: 0; border-radius: 12px; padding: 11px 12px; cursor: pointer; transition: background .18s var(--ease), transform .18s var(--ease); }
+.mi:hover:not(:disabled) { background: #ffffff14; transform: translateX(4px); }
+.mi:disabled { opacity: .6; cursor: wait; }
+.mi .ic { width: 24px; height: 24px; flex: none; }
+.mi small { margin-left: auto; font: 500 11px var(--mono); letter-spacing: .04em; color: var(--muted); text-transform: uppercase; white-space: nowrap; }
+.ic { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.time-row { margin-top: 22px; max-width: 360px; display: grid; gap: 8px; }
+.time-row .chips button { background: #ffffff10; border-color: #ffffff1f; backdrop-filter: blur(6px); }
+.time-row .chips button.on { background: var(--text); border-color: var(--text); color: #050506; }
+#homeErr { text-align: left; }
+
+.dock { margin-top: auto; display: flex; justify-content: center; gap: 12px; padding: 24px 20px 10px; }
+.dock-btn { width: 52px; height: 52px; display: grid; place-items: center; color: var(--text); background: #ffffff12; border: 1px solid #ffffff1f; border-radius: 16px; cursor: pointer; text-decoration: none; backdrop-filter: blur(8px); transition: background .2s var(--ease), transform .2s var(--ease), border-color .2s var(--ease); }
+.dock-btn:hover { background: #3ddc8422; border-color: #3ddc8488; transform: translateY(-2px); }
+.dock-btn .ic { width: 24px; height: 24px; }
+#home .foot { justify-content: center; padding: 6px 20px 20px; }
+@media (max-width: 640px) {
+  .home-menu { padding: 0 16px; }
+  .mi { font-size: 18px; }
+  .bg-shade { background: linear-gradient(180deg, #050506b0 0%, #05050680 55%, #05050650 100%); }
+}
+
+/* окно ввода имени/кода */
+.ask { display: grid; gap: 14px; margin-top: 12px; }
+.ask label { display: grid; gap: 6px; }
+.ask .row { margin-top: 4px; }
+
+/* миникарта: обычный размер → при наведении +60% → кнопка «⤢» делает почти на весь экран */
+.mini { width: 300px; }
+.mini #map { height: 190px; }
+.mini:hover:not(.big):not(.done) { width: 480px; }
+.mini:hover:not(.big):not(.done) #map { height: 304px; }
+.mini.big, .mini.big:hover { width: min(1000px, calc(100vw - 28px)); }
+.mini.big #map, .mini.big:hover #map { height: min(640px, 70vh); }
+@media (max-width: 640px) {
+  .mini { width: 170px; }
+  .mini #map { height: 120px; }
+  .mini:hover:not(.big):not(.done) { width: 170px; }
+  .mini:hover:not(.big):not(.done) #map { height: 120px; }
+  .mini.big, .mini.big:hover { width: calc(100vw - 20px); }
+  .mini.big #map, .mini.big:hover #map { height: 62vh; }
+}
+
+.leaflet-container { background: #a9cde6; } /* цвет океана, пока рисуется векторная карта */
+
+.pann-view { position: absolute; inset: 0; z-index: 4; background: #000; }
+.pann-view .pnlm-container { background: #000; }
+.pnlm-about-msg, .pnlm-load-box, .pnlm-lbar { font-family: var(--sans); }
+.pnlm-controls-container { top: auto; bottom: 120px; left: 12px; }
+/* вторая строка управления (скорость автопроигрывания, таймлайн) для игры не нужна и вылезает за экран */
+.mapillary-sequence-controls, .mapillary-sequence-playback, .mapillary-sequence-timeline { display: none !important; }

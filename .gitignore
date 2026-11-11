@@ -1,0 +1,8 @@
+node_modules/
+data/
+.env
+*.log
+.test-data-*/
+ecosystem.config.cjs
+.claude/
+private/
